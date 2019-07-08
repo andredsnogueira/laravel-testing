@@ -42,7 +42,15 @@ class UserTest extends TestCase
         ];
 
         $this->put('/api/v1/users/' . $user->id, $data)
-            ->assertStatus(200);
+            ->assertStatus(200)
+            ->assertJson(['data' => [
+                'id' => $user->id,
+                'name' => $newName,
+                'email' => $user->email,
+                'email_verified_at' => $user->email_verified_at,
+                'created_at' => $user->created_at,
+                'updated_at' => $user->updated_at,
+            ]]);
 
         $this->assertDatabaseHas('users', [
             'name' => $newName,
