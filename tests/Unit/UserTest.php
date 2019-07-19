@@ -22,9 +22,13 @@ class UserTest extends TestCase
             'password' => $password
         ];
 
+        $this->assertDatabaseMissing('users', [
+            'email' => $email,
+        ]);
+
         $this->post('/api/v1/users', $data)
             ->assertStatus(201)
-            ->assertJson(['data' => 'User created with success!']);
+            ->assertExactJson(['data' => 'User created with success!']);
 
         $this->assertDatabaseHas('users', [
             'email' => $email,
@@ -40,6 +44,10 @@ class UserTest extends TestCase
         $data = [
             'name' => $newName
         ];
+
+        $this->assertDatabaseHas('users', [
+            'name' => $user->name,
+        ]);
 
         $this->put('/api/v1/users/' . $user->id, $data)
             ->assertStatus(200)
@@ -61,6 +69,10 @@ class UserTest extends TestCase
     {
         $user = factory(User::class)->create();
 
+        $this->assertDatabaseHas('users', [
+            'email' => $user->email,
+        ]);
+
         $this->delete('/api/v1/users/' . $user->id)
             ->assertStatus(204);
 
@@ -73,6 +85,10 @@ class UserTest extends TestCase
     {
         $user = factory(User::class)->create();
 
+        $this->assertDatabaseHas('users', [
+            'email' => $user->email,
+        ]);
+
         $this->get('/api/v1/users/' . $user->id)
             ->assertStatus(200)
             ->assertJson(['data' => [
@@ -83,9 +99,5 @@ class UserTest extends TestCase
                 'created_at' => $user->created_at,
                 'updated_at' => $user->updated_at,
             ]]);
-
-        $this->assertDatabaseHas('users', [
-            'email' => $user->email,
-        ]);
     }
 }
